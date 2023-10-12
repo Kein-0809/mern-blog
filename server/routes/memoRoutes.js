@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Memo = require('../models/memoModel');
+const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 const authenticateJWT = require('../middleware/authMiddleware');
 
@@ -31,12 +32,18 @@ const getAllMemos = async (req, res, next) => {
 // Create Memo route logic
 const createMemo = async (req, res, next) => {
   try {
-    const { title, content, user } = req.body;
+    const { title, content, username } = req.body;
+
+    const user = await User.findOne({ username: username }).select('_id');
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
 
     const memo = new Memo({
       title,
       content,
-      user  // This is input for ObjectId for each user
+      user: user._id
+      // "user" is input for ObjectId for each user
       // (e.g.) ObjectId('0500quati0ua0u0agu904w3')
       // Ur supposed to put '0500quati0ua0u0agu904w3' for 'user' key
     });

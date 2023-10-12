@@ -7,13 +7,13 @@ function authenticateJWT(req, res, next) {
   }
 
   const token = authHeader.replace('Bearer ', '');
-  console.log("Token to verify:", token); // Debug statement
+  // console.log("Token to verify:", token); // Debug statement
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
       return res.status(403).send('Token is not valid.');
     }
     req.user = user;
-    console.log("Decoded JWT:", user);
+    // console.log("Decoded JWT:", user); // Debug statement
     next();
   });
 }
